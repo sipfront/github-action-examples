@@ -1,6 +1,6 @@
 name: Run Sipfront Call Test
 
-on: [ pull_request ]
+on: [ pull_request, workflow_dispatch ]
 
 jobs:
   sipfront-call-test:
