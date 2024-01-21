@@ -1,16 +1,32 @@
-# github-action-examples
+# Example repo using the `sipfront/action-call-test` GitHub Workflow Action
 
-This repo shows integration examples for [GitHub Actions](https://github.com/features/actions) into the [Sipfront App](https://app.sipfront.com).
+Sipfront is a test automation platform for telecom tests.
+It is hosted at [https://app.sipfront.com](https://app.sipfront.com),
+and you can find more information on our [homepage](https://sipfront.com).
 
-## Preparing your repo
+This repository demonstrates the integration of a Sipfront end-to-end call test
+into the GitHub CI/CD pipeline.
 
-### Generate API credentials
+## Run the demo
 
-In order to use the Sipfront API, you need to generate new API credentials. You can do this in the [Sipfront App](https://app.sipfront.com/subscription/apikey).
+1. Fork this repository
+1. Simulate a code change by running `date >> src/testfile.txt`
+1. Commit and push the changes
+1. Create a pull request to merge your change into upstream (this) repository
 
-### Add API credentials to your repo
+After creating the pull request, you will see the Sipfront test running in
+the background, and eventually you'll get a green checkmark or a red cross
+indicating the test result.
 
-Navigate to your repo's settings page, and on the left hand menu go to `Secrets and variables`. Under `Actions`, click on `New repository secret` and create a new entry with the name `SIPFRONT_PUBLIC_KEY` and the value given in your Sipfront App. Do the same for another entry `SIPFRONT_SECRET_KEY` with the secret key value given in your Sipfront App.
+## Integrate Sipfront tests into your own repo
+
+Copy the [example workflow YAML file](https://github.com/sipfront/github-action-examples/blob/master/.github/workflows/run_sipfront_on_pr.yml) to your own repository, and adapt it as needed.
+
+You can find the documentation for setting up the workflow and its prerequisites in the
+[action documentation](https://github.com/marketplace/actions/sipfront-call-test).
+
+**IMPORTANT:** You need to set up the Sipfront API credentials in the repository secrets,
+please read the docs!
 
 
 

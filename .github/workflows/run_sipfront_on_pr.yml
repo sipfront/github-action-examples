@@ -1,5 +1,3 @@
-# Your .github/workflows/run_sipfront_on_pr.yml file.
-
 name: Run Sipfront Call Test
 
 on: [ pull_request ]
@@ -19,13 +17,11 @@ jobs:
       # Then, trigger the test run:
       - name: Run end-to-end Sipfront call test
         id: testcall
-        uses: actions/sipfront-call-test@v0.0.3
+        uses: sipfront/action-call-test@v0.0.6
         with:
           public_key: '${{ secrets.SIPFRONT_PUBLIC_KEY }}'
           secret_key: '${{ secrets.SIPFRONT_SECRET_KEY }}'
-          name: 'sipfront-a-b'
-          destination: '439992002'
-          sf_environment: 'dev'
+          name: 'basic-call-a-b'
 
       # You can also print the test session id used in the call test
       - name: Print Output
