@@ -5,7 +5,10 @@ It is hosted at [https://app.sipfront.com](https://app.sipfront.com),
 and you can find more information on our [homepage](https://sipfront.com).
 
 This repository demonstrates the integration of a Sipfront end-to-end call test
-into the GitHub CI/CD pipeline.
+into the GitHub CI/CD pipeline. It triggers a Sipfront test run whenever
+a pull request is created, helping both an external contributor to this repo, as
+well as an internal reviewer to immediately see breaking changes to a basic
+call test scenario.
 
 ## Run the demo
 
