@@ -16,7 +16,7 @@ jobs:
 
       # Then, trigger the test run:
       - name: Run end-to-end Sipfront call test
-        id: testcall
+        id: testcall-1
         uses: sipfront/action-call-test@v0.0.7
         with:
           public_key: '${{ secrets.SIPFRONT_PUBLIC_KEY }}'
@@ -25,7 +25,7 @@ jobs:
 
       # Then, trigger the test run:
       - name: Run another end-to-end Sipfront call test
-        id: testcall
+        id: testcall-2
         uses: sipfront/action-call-test@v0.0.7
         with:
           public_key: '${{ secrets.SIPFRONT_PUBLIC_KEY }}'
@@ -34,7 +34,7 @@ jobs:
 
       # Then, trigger the test run:
       - name: Run yet another end-to-end Sipfront call test
-        id: testcall
+        id: testcall-3
         uses: sipfront/action-call-test@v0.0.7
         with:
           public_key: '${{ secrets.SIPFRONT_PUBLIC_KEY }}'
