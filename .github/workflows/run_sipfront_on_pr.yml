@@ -1,6 +1,6 @@
 name: Run Sipfront Call Test
 
-on: [ pull_request, workflow_dispatch ]
+on: [ push, pull_request, workflow_dispatch ]
 
 jobs:
   sipfront-call-test:
@@ -23,11 +23,13 @@ jobs:
       # this SHA whenever the action logic changes (tag a release once stable).
       - name: Check basic end-to-end call from A to B
         id: testcall-1
-        uses: sipfront/action-call-test@46565e4d3e51b9c4a45f56b6cab5f84cc145aed7
+        uses: sipfront/action-call-test@2801a4abc8914fb29f232efd9d483172ebab95a9
         with:
-          public_key: '${{ secrets.SIPFRONT_PUBLIC_KEY }}'
-          secret_key: '${{ secrets.SIPFRONT_SECRET_KEY }}'
+          public_key: '${{ secrets.SIPFRONT_PUBLIC_KEY_DEV }}'
+          secret_key: '${{ secrets.SIPFRONT_SECRET_KEY_DEV }}'
           name: 'basic-call-a-b'
+          # Run against the dev infrastructure (https://app.dev.sipfront.com)
+          sf_environment: 'dev'
           # Make report_url point to the kiosk (fullscreen) version of the report
           report_mode: 'kiosk'
 
@@ -46,11 +48,13 @@ jobs:
       # Then, trigger the test run:
       - name: Check if DTMF is working
         id: testcall-2
-        uses: sipfront/action-call-test@46565e4d3e51b9c4a45f56b6cab5f84cc145aed7
+        uses: sipfront/action-call-test@2801a4abc8914fb29f232efd9d483172ebab95a9
         with:
-          public_key: '${{ secrets.SIPFRONT_PUBLIC_KEY }}'
-          secret_key: '${{ secrets.SIPFRONT_SECRET_KEY }}'
+          public_key: '${{ secrets.SIPFRONT_PUBLIC_KEY_DEV }}'
+          secret_key: '${{ secrets.SIPFRONT_SECRET_KEY_DEV }}'
           name: 'validate-dtmf'
+          # Run against the dev infrastructure (https://app.dev.sipfront.com)
+          sf_environment: 'dev'
           # Make report_url point to the kiosk (fullscreen) version of the report
           report_mode: 'kiosk'
 
@@ -62,4 +66,26 @@ jobs:
           {
             echo "### DTMF call test: ${{ steps.testcall-2.outputs.status }}"
             echo "[View report](${{ steps.testcall-2.outputs.report_url }}) — session \`${{ steps.testcall-2.outputs.session_id }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Then, run a whole project (all tests in the project) by name:
+      - name: Run the "Demo Project" project
+        id: projectrun-1
+        uses: sipfront/action-call-test@2801a4abc8914fb29f232efd9d483172ebab95a9
+        with:
+          public_key: '${{ secrets.SIPFRONT_PUBLIC_KEY_DEV }}'
+          secret_key: '${{ secrets.SIPFRONT_SECRET_KEY_DEV }}'
+          mode: 'project'
+          project_name: 'Demo Project'
+          # Run against the dev infrastructure (https://app.dev.sipfront.com)
+          sf_environment: 'dev'
+
+      - name: Report for Demo Project run
+        if: ${{ always() && steps.projectrun-1.outputs.report_url != '' }}
+        run: |
+          echo "Demo Project status: ${{ steps.projectrun-1.outputs.status }}"
+          echo "Demo Project report: ${{ steps.projectrun-1.outputs.report_url }}"
+          {
+            echo "### Demo Project run: ${{ steps.projectrun-1.outputs.status }}"
+            echo "[View report](${{ steps.projectrun-1.outputs.report_url }}) — project run \`${{ steps.projectrun-1.outputs.project_run_uuid }}\` (${{ steps.projectrun-1.outputs.tests_started }}/${{ steps.projectrun-1.outputs.total_tests }} tests)"
           } >> "$GITHUB_STEP_SUMMARY"
