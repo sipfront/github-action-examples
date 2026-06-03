@@ -29,6 +29,18 @@ jobs:
           secret_key: '${{ secrets.SIPFRONT_SECRET_KEY }}'
           name: 'basic-call-a-b'
 
+      # Print the report link whether the call test passed or failed. The action
+      # sets its outputs before failing, so report_url is available either way.
+      - name: Report for A-to-B call test
+        if: ${{ always() && steps.testcall-1.outputs.report_url != '' }}
+        run: |
+          echo "A-to-B status: ${{ steps.testcall-1.outputs.status }}"
+          echo "A-to-B report: ${{ steps.testcall-1.outputs.report_url }}"
+          {
+            echo "### A-to-B call test: ${{ steps.testcall-1.outputs.status }}"
+            echo "[View report](${{ steps.testcall-1.outputs.report_url }}) — session \`${{ steps.testcall-1.outputs.session_id }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
       # Then, trigger the test run:
       - name: Check if DTMF is working
         id: testcall-2
@@ -38,13 +50,12 @@ jobs:
           secret_key: '${{ secrets.SIPFRONT_SECRET_KEY }}'
           name: 'validate-dtmf'
 
-      # Print the session id, status and report URL of each call test
-      - name: Print Output
-        id: output
+      - name: Report for DTMF call test
+        if: ${{ always() && steps.testcall-2.outputs.report_url != '' }}
         run: |
-          echo "A-to-B    session: ${{ steps.testcall-1.outputs.session_id }}"
-          echo "A-to-B    status:  ${{ steps.testcall-1.outputs.status }}"
-          echo "A-to-B    report:  ${{ steps.testcall-1.outputs.report_url }}"
-          echo "DTMF      session: ${{ steps.testcall-2.outputs.session_id }}"
-          echo "DTMF      status:  ${{ steps.testcall-2.outputs.status }}"
-          echo "DTMF      report:  ${{ steps.testcall-2.outputs.report_url }}"
+          echo "DTMF status: ${{ steps.testcall-2.outputs.status }}"
+          echo "DTMF report: ${{ steps.testcall-2.outputs.report_url }}"
+          {
+            echo "### DTMF call test: ${{ steps.testcall-2.outputs.status }}"
+            echo "[View report](${{ steps.testcall-2.outputs.report_url }}) — session \`${{ steps.testcall-2.outputs.session_id }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
