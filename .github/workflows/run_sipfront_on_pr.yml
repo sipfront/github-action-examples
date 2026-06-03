@@ -11,7 +11,7 @@ jobs:
       # First, checkout the code
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Your pre-requisites steps go here to
       # * format and lint your code,
@@ -23,7 +23,7 @@ jobs:
       # this SHA whenever the action logic changes (tag a release once stable).
       - name: Check basic end-to-end call from A to B
         id: testcall-1
-        uses: sipfront/action-call-test@2801a4abc8914fb29f232efd9d483172ebab95a9
+        uses: sipfront/action-call-test@d5cce5b9876a0bdf69642560d8e317f6b2309402
         with:
           public_key: '${{ secrets.SIPFRONT_PUBLIC_KEY_DEV }}'
           secret_key: '${{ secrets.SIPFRONT_SECRET_KEY_DEV }}'
@@ -45,10 +45,13 @@ jobs:
             echo "[View report](${{ steps.testcall-1.outputs.report_url }}) — session \`${{ steps.testcall-1.outputs.session_id }}\`"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # Then, trigger the test run:
+      # Then, trigger the test run. Run it even if the previous test failed
+      # (but not if the workflow was cancelled); the job still fails overall if
+      # any test fails.
       - name: Check if DTMF is working
         id: testcall-2
-        uses: sipfront/action-call-test@2801a4abc8914fb29f232efd9d483172ebab95a9
+        if: ${{ !cancelled() }}
+        uses: sipfront/action-call-test@d5cce5b9876a0bdf69642560d8e317f6b2309402
         with:
           public_key: '${{ secrets.SIPFRONT_PUBLIC_KEY_DEV }}'
           secret_key: '${{ secrets.SIPFRONT_SECRET_KEY_DEV }}'
@@ -68,10 +71,12 @@ jobs:
             echo "[View report](${{ steps.testcall-2.outputs.report_url }}) — session \`${{ steps.testcall-2.outputs.session_id }}\`"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # Then, run a whole project (all tests in the project) by name:
+      # Then, run a whole project (all tests in the project) by name, even if
+      # an earlier test failed (but not if the workflow was cancelled):
       - name: Run the "Demo Project" project
         id: projectrun-1
-        uses: sipfront/action-call-test@2801a4abc8914fb29f232efd9d483172ebab95a9
+        if: ${{ !cancelled() }}
+        uses: sipfront/action-call-test@d5cce5b9876a0bdf69642560d8e317f6b2309402
         with:
           public_key: '${{ secrets.SIPFRONT_PUBLIC_KEY_DEV }}'
           secret_key: '${{ secrets.SIPFRONT_SECRET_KEY_DEV }}'
