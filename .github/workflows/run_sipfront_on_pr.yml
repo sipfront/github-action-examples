@@ -28,6 +28,8 @@ jobs:
           public_key: '${{ secrets.SIPFRONT_PUBLIC_KEY }}'
           secret_key: '${{ secrets.SIPFRONT_SECRET_KEY }}'
           name: 'basic-call-a-b'
+          # Make report_url point to the kiosk (fullscreen) version of the report
+          report_mode: 'kiosk'
 
       # Print the report link whether the call test passed or failed. The action
       # sets its outputs before failing, so report_url is available either way.
@@ -49,6 +51,8 @@ jobs:
           public_key: '${{ secrets.SIPFRONT_PUBLIC_KEY }}'
           secret_key: '${{ secrets.SIPFRONT_SECRET_KEY }}'
           name: 'validate-dtmf'
+          # Make report_url point to the kiosk (fullscreen) version of the report
+          report_mode: 'kiosk'
 
       - name: Report for DTMF call test
         if: ${{ always() && steps.testcall-2.outputs.report_url != '' }}
