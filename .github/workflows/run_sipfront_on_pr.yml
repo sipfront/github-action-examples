@@ -19,9 +19,11 @@ jobs:
       #   https://docs.github.com/en/actions/deployment/deploying-to-your-cloud-provider/deploying-to-amazon-elastic-container-service
 
       # Then, trigger the test run:
+      # Pinned to a commit on action-call-test master while we iterate; bump
+      # this SHA whenever the action logic changes (tag a release once stable).
       - name: Check basic end-to-end call from A to B
         id: testcall-1
-        uses: sipfront/action-call-test@v0.0.7
+        uses: sipfront/action-call-test@46565e4d3e51b9c4a45f56b6cab5f84cc145aed7
         with:
           public_key: '${{ secrets.SIPFRONT_PUBLIC_KEY }}'
           secret_key: '${{ secrets.SIPFRONT_SECRET_KEY }}'
@@ -30,13 +32,19 @@ jobs:
       # Then, trigger the test run:
       - name: Check if DTMF is working
         id: testcall-2
-        uses: sipfront/action-call-test@v0.0.7
+        uses: sipfront/action-call-test@46565e4d3e51b9c4a45f56b6cab5f84cc145aed7
         with:
           public_key: '${{ secrets.SIPFRONT_PUBLIC_KEY }}'
           secret_key: '${{ secrets.SIPFRONT_SECRET_KEY }}'
-          name: 'validate-dtmf'  
+          name: 'validate-dtmf'
 
-      # You can also print the test session id used in the call test
+      # Print the session id, status and report URL of each call test
       - name: Print Output
         id: output
-        run: echo "${{ steps.testcall.outputs.session_id }}"
+        run: |
+          echo "A-to-B    session: ${{ steps.testcall-1.outputs.session_id }}"
+          echo "A-to-B    status:  ${{ steps.testcall-1.outputs.status }}"
+          echo "A-to-B    report:  ${{ steps.testcall-1.outputs.report_url }}"
+          echo "DTMF      session: ${{ steps.testcall-2.outputs.session_id }}"
+          echo "DTMF      status:  ${{ steps.testcall-2.outputs.status }}"
+          echo "DTMF      report:  ${{ steps.testcall-2.outputs.report_url }}"
